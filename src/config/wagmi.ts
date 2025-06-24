@@ -9,6 +9,30 @@ const chains = (isDevelopment
   : [polygon, base, mainnet]
 ) as [typeof polygonMumbai | typeof baseSepolia | typeof sepolia, ...(typeof polygonMumbai | typeof baseSepolia | typeof sepolia)[]]
 
+// BigInt utility functions
+export const formatBigInt = (value: bigint | string | number): string => {
+  if (typeof value === 'bigint') {
+    return value.toString()
+  }
+  return String(value)
+}
+
+export const toBigInt = (value: string | number): bigint => {
+  try {
+    return BigInt(value)
+  } catch (error) {
+    console.warn('Failed to convert to BigInt:', value)
+    return BigInt(0)
+  }
+}
+
+export const safeBigIntToNumber = (value: bigint): number => {
+  if (value > BigInt(Number.MAX_SAFE_INTEGER)) {
+    console.warn('BigInt value exceeds MAX_SAFE_INTEGER, precision may be lost')
+    return Number.MAX_SAFE_INTEGER
+  }
+  return Number(value)
+}
 
 export const wagmiConfig = getDefaultConfig({
   appName: 'Charlie Unicorn AI',
@@ -173,7 +197,7 @@ export const CONTRACT_ABIS = {
   ],
 } as const
 
-// Utility functions for contract interactions
+// Utility functions for contract interactions with BigInt handling
 export const getContractConfig = (contractName: keyof typeof CONTRACT_ABIS) => {
   const addresses = getContractAddresses()
   return {
@@ -182,7 +206,7 @@ export const getContractConfig = (contractName: keyof typeof CONTRACT_ABIS) => {
   }
 }
 
-// Network switching helper
+// Enhanced network switching helper with error handling
 export const switchToSupportedNetwork = async () => {
   const targetChainId = isDevelopment ? 80001 : 137
   
@@ -193,23 +217,68 @@ export const switchToSupportedNetwork = async () => {
         params: [{ chainId: `0x${targetChainId.toString(16)}` }],
       })
     } catch (error: any) {
+      console.error('Network switch error:', error)
       // If the chain hasn't been added to MetaMask, add it
       if (error.code === 4902) {
         const chainConfig = getCurrentChain()
         if (chainConfig) {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: `0x${chainConfig.id.toString(16)}`,
-              chainName: chainConfig.name,
-              nativeCurrency: chainConfig.nativeCurrency,
-              rpcUrls: [chainConfig.rpcUrl],
-              blockExplorerUrls: [chainConfig.blockExplorer],
-            }],
-          })
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: `0x${chainConfig.id.toString(16)}`,
+                chainName: chainConfig.name,
+                nativeCurrency: chainConfig.nativeCurrency,
+                rpcUrls: [chainConfig.rpcUrl],
+                blockExplorerUrls: [chainConfig.blockExplorer],
+              }],
+            })
+          } catch (addError) {
+            console.error('Failed to add network:', addError)
+            throw addError
+          }
         }
+      } else {
+        throw error
       }
     }
+  }
+}
+
+// Helper function to format token amounts safely
+export const formatTokenAmount = (
+  amount: bigint | string | number, 
+  decimals: number = 18,
+  displayDecimals: number = 4
+): string => {
+  try {
+    const bigIntAmount = typeof amount === 'bigint' ? amount : BigInt(amount)
+    const divisor = BigInt(10 ** decimals)
+    const quotient = bigIntAmount / divisor
+    const remainder = bigIntAmount % divisor
+    
+    // Convert to decimal string
+    const wholeNumber = quotient.toString()
+    const decimal = remainder.toString().padStart(decimals, '0').slice(0, displayDecimals)
+    
+    return decimal === '0'.repeat(displayDecimals) 
+      ? wholeNumber 
+      : `${wholeNumber}.${decimal}`.replace(/\.?0+$/, '')
+  } catch (error) {
+    console.error('Error formatting token amount:', error)
+    return '0'
+  }
+}
+
+// Helper function to parse token amounts to BigInt
+export const parseTokenAmount = (amount: string, decimals: number = 18): bigint => {
+  try {
+    const [whole, decimal = ''] = amount.split('.')
+    const paddedDecimal = decimal.padEnd(decimals, '0').slice(0, decimals)
+    return BigInt(whole + paddedDecimal)
+  } catch (error) {
+    console.error('Error parsing token amount:', error)
+    return BigInt(0)
   }
 }
 

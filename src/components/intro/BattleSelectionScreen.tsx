@@ -3,10 +3,10 @@ import { motion } from 'framer-motion'
 import { useTelegram } from '../../hooks/useTelegram'
 
 interface BattleSelectionScreenProps {
-  // Add any props you need, like navigation handlers
+  onBattleStart: () => void // Add this prop
 }
 
-export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = () => {
+export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = ({ onBattleStart }) => {
   const { hapticFeedback } = useTelegram()
   const [selectedMode, setSelectedMode] = useState(1) // 0: Tournament, 1: Multiplayer, 2: Training
   
@@ -17,7 +17,8 @@ export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = () =>
       subtitle: "TOURNAMENT",
       image: "/assets/images/tournament-card.svg",
       stars: 3,
-      hexColor: "from-purple-500 to-blue-500"
+      bgColor: "bg-purple-500",
+      borderColor: "border-purple-400"
     },
     {
       id: 1,
@@ -25,32 +26,33 @@ export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = () =>
       subtitle: "",
       image: "/assets/images/multiplayer-card.svg",
       stars: 0,
-      hexColor: "from-yellow-400 to-orange-500",
+      bgColor: "bg-orange-400",
+      borderColor: "border-orange-300",
       isCenter: true
     },
     {
       id: 2,
-      title: "TRANING TRIALS",
+      title: "TRAINING TRIALS",
       subtitle: "",
       image: "/assets/images/training-card.svg",
       stars: 0,
-      hexColor: "from-orange-400 to-red-500"
+      bgColor: "bg-red-400",
+      borderColor: "border-red-300"
     }
   ]
 
   const bottomItems = [
-    { title: "SETTINGS", image: "/assets/images/settings-icon.svg" },
-    { title: "INBOX", image: "/assets/images/inbox-icon.svg" },
-    { title: "CARD", image: "/assets/images/card-icon.svg" },
-    { title: "DECKS", image: "/assets/images/decks-icon.svg" },
-    { title: "PROFILE", image: "/assets/images/profile-icon.svg", badge: "4" },
-    { title: "MARKETPLACE", image: "/assets/images/marketplace-icon.svg" },
+    { title: "SETTINGS", image: "/assets/images/settings_icon.svg" },
+    { title: "INBOX", image: "/assets/images/inbox.svg" },
+    { title: "CARD", image: "/assets/images/card_icon.svg" },
+    { title: "DECKS", image: "/assets/images/decks.svg" },
+    { title: "PROFILE", image: "/assets/images/profile_icon.svg", badge: "4" },
+    { title: "MARKETPLACE", image: "/assets/images/marketplace.svg" },
   ]
 
   const handleBattleClick = () => {
     hapticFeedback('impact', 'medium')
-    // Add your battle logic here
-    console.log('Starting battle with mode:', selectedMode)
+    onBattleStart() // Call the prop function to navigate to searching screen
   }
 
   const handleModeSelect = (modeId: number) => {
@@ -60,9 +62,28 @@ export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = () =>
 
   const handleBottomItemClick = (item: string) => {
     hapticFeedback('impact', 'light')
-    // Add navigation logic here
     console.log('Clicked:', item)
   }
+
+  const handlePrevMode = () => {
+    hapticFeedback('impact', 'light')
+    setSelectedMode((prev) => (prev > 0 ? prev - 1 : 2))
+  }
+
+  const handleNextMode = () => {
+    hapticFeedback('impact', 'light')
+    setSelectedMode((prev) => (prev < 2 ? prev + 1 : 0))
+  }
+
+  const getCurrentModeOrder = () => {
+    return [
+      battleModes[(selectedMode + 2) % 3], // Left
+      battleModes[selectedMode],            // Center
+      battleModes[(selectedMode + 1) % 3]   // Right
+    ]
+  }
+
+  const orderedModes = getCurrentModeOrder()
 
   return (
     <motion.div
@@ -97,195 +118,303 @@ export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = () =>
       {/* Top Stats */}
       <div className="flex justify-between items-center p-6 relative z-10">
         {/* Funny Mode */}
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-            <img src="/assets/images/funny-mode-icon.svg" alt="Funny Mode" className="w-8 h-8" />
-          </div>
-          <div>
-            <div className="text-white font-bold text-lg">3200</div>
-            <div className="text-white/60 text-sm">FUNNY MODE</div>
-          </div>
-        </div>
+        <div className="flex flex-col items-center">
+            {/* Combined icon and score container */}
+            <div className="relative flex items-center">
+                {/* Hexagonal icon */}
+                <div 
+                className="w-12 h-12 bg-transparent flex items-center justify-center relative z-10"
+                style={{
+                    clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)'
+                }}
+                >
+                <img src="/assets/images/funny-mode-icon.svg" alt="Funny Mode" className="w-16 h-16" />
+                </div>
+                
+                {/* Attached rectangular score container */}
+                <div className="bg-[#282A47] rounded-r px-3 py-1 -ml-2 pl-18">
+                <div className="text-white font-bold text-sm">3200</div>
+                </div>
+            </div>
+            
+            {/* Mode label below */}
+            <div className="text-white/60 text-xs mt-1">FUNNY MODE</div>
+            </div>
 
         {/* Hardcore Mode */}
-        <div className="flex items-center space-x-3">
-          <div>
-            <div className="text-white font-bold text-lg text-right">0</div>
-            <div className="text-white/60 text-sm">HARDCORE MODE</div>
-          </div>
-          <div className="w-12 h-12 bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg flex items-center justify-center">
-            <img src="/assets/images/hardcore-mode-icon.svg" alt="Hardcore Mode" className="w-8 h-8" />
-          </div>
-        </div>
+       <div className="flex flex-col items-center">
+            {/* Combined icon and score container */}
+            <div className="relative flex items-center">
+                {/* Hexagonal icon */}
+                <div 
+                className="w-12 h-12 bg-transparent  flex items-center justify-center relative z-10"
+                style={{
+                    clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)'
+                }}
+                >
+                <img src="/assets/images/hardcore-mode-icon.svg" alt="Hardcore Mode" className="w-16 h-16" />
+                </div>
+                
+                {/* Attached rectangular score container */}
+                <div className="bg-[#282A47] rounded-r px-3 py-1 -ml-2 pl-18 ">
+                <div className="text-white font-bold text-sm">0</div>
+                </div>
+            </div>
+            
+            {/* Mode label below */}
+            <div className="text-white/60 text-xs mt-1">HARDCORE MODE</div>
+            </div>
       </div>
 
       {/* Main Battle Cards */}
-      <div className="flex-1 flex items-center justify-center px-6 relative z-10">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 relative z-10 py-8">
+        
+         <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 1 }}>
+            <img 
+            src="/assets/images/backgroundV.svg" 
+            alt="Background" 
+            className="w-full max-w-xl h-auto object-contain opacity-30"
+            />
+        </div>
         <div className="relative w-full max-w-lg">
           {/* Battle Mode Cards */}
-          <div className="flex justify-between items-center relative">
-            {battleModes.map((mode, index) => (
+          <div className="flex justify-center items-center relative space-x-4 mb-8">
+            {orderedModes.map((mode, index) => (
               <motion.div
-                key={mode.id}
+                key={`${mode.id}-${index}`}
                 className={`relative cursor-pointer ${
-                  mode.isCenter ? 'w-48 h-64 z-20' : 'w-32 h-44 z-10'
+                  index === 1 ? 'w-56 h-72 z-20' : 'w-40 h-56 z-10'
                 }`}
                 style={{
-                  marginTop: mode.isCenter ? 0 : '40px',
-                  ...(index === 0 && { marginLeft: '-20px' }),
-                  ...(index === 2 && { marginRight: '-20px' }),
+                  marginTop: index === 1 ? 0 : '32px',
                 }}
-                whileHover={{ scale: mode.isCenter ? 1.05 : 1.1 }}
+                whileHover={{ scale: index === 1 ? 1.02 : 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleModeSelect(mode.id)}
+                animate={{
+                  scale: index === 1 ? 1 : 0.85,
+                  opacity: index === 1 ? 1 : 0.7,
+                }}
+                transition={{ duration: 0.3 }}
               >
-                {/* Hexagonal Card */}
-                <div 
-                  className={`relative w-full h-full bg-gradient-to-br ${mode.hexColor} rounded-lg border-2 ${
-                    selectedMode === mode.id ? 'border-cyan-400 shadow-lg shadow-cyan-400/50' : 'border-white/30'
-                  } overflow-hidden transition-all duration-300`}
-                  style={{
-                    clipPath: 'polygon(25% 0%, 75% 0%, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0% 75%, 0% 25%)'
-                  }}
-                >
-                  {/* Card Content */}
-                  <div className="relative w-full h-full p-4 flex flex-col items-center justify-center">
-                    {/* Character Image */}
-                    <div className={`${mode.isCenter ? 'w-24 h-24 mb-4' : 'w-16 h-16 mb-2'} relative`}>
-                      <img
-                        src={mode.image}
-                        alt={mode.title}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-
-                    {/* Title */}
-                    <div className="text-center">
-                      <div className={`text-white font-bold ${mode.isCenter ? 'text-sm' : 'text-xs'} leading-tight`}>
-                        {mode.title}
-                      </div>
-                      {mode.subtitle && (
-                        <div className={`text-white/80 ${mode.isCenter ? 'text-xs' : 'text-xs'} mt-1`}>
-                          {mode.subtitle}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Stars */}
-                    {mode.stars > 0 && (
-                      <div className="flex space-x-1 mt-2">
-                        {[...Array(mode.stars)].map((_, i) => (
-                          <div key={i} className="w-3 h-3 text-yellow-400">⭐</div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* NFT Badge for center card */}
-                    {mode.isCenter && (
-                      <div className="absolute bottom-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded">
-                        NFT
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-lg blur-sm -z-10" />
+                {/* Card Image */}
+                <div className="relative w-full h-full">
+                  <img
+                    src={mode.image}
+                    alt={mode.title}
+                    className="w-full h-full object-contain drop-shadow-2xl"
+                  />
+                  
+                  {/* Selection highlight for center card */}
+                  {index === 1 && (
+                    <div className="absolute inset-0 bg-cyan-400/20 rounded-lg blur-lg" />
+                  )}
                 </div>
+
+                {/* Stars */}
+                {mode.stars > 0 && index === 1 && (
+                  <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                    {[...Array(mode.stars)].map((_, i) => (
+                      <div key={i} className="w-4 h-4 text-yellow-400 drop-shadow-lg">⭐</div>
+                    ))}
+                  </div>
+                )}
+
+                {/* NFT Badge for center card */}
+                {index === 1 && (
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full drop-shadow-lg">
+                    NFT
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
 
-          {/* Navigation Arrows */}
-          <motion.button
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-16 w-12 h-12 bg-purple-500/50 rounded-full flex items-center justify-center text-white hover:bg-purple-500/70 transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => hapticFeedback('impact', 'light')}
-          >
-            &#8249;
-          </motion.button>
+          {/* Navigation Arrows - Positioned relative to the cards container */}
+            <div className="relative">
+            {/* Left Arrow */}
+            <motion.button
+                className="absolute bottom-4 left-12 w-8 h-8 flex items-center justify-center text-white"
+                style={{ zIndex: 25 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handlePrevMode}
+            >
+                <img src="/assets/images/back_icon.svg" alt="Previous" className="w-8 h-8" />
+            </motion.button>
 
-          <motion.button
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-16 w-12 h-12 bg-purple-500/50 rounded-full flex items-center justify-center text-white hover:bg-purple-500/70 transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => hapticFeedback('impact', 'light')}
-          >
-            &#8250;
-          </motion.button>
+            {/* Right Arrow */}
+            <motion.button
+                className="absolute bottom-4 right-12 w-8 h-8 flex items-center justify-center text-white"
+                style={{ zIndex: 25 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleNextMode}
+            >
+                <img src="/assets/images/front_icon.svg" alt="Next" className="w-8 h-8" />
+            </motion.button>
+            </div>
         </div>
       </div>
 
-      {/* Battle Now Button */}
-      <div className="px-6 mb-8 relative z-10">
-        <motion.button
-          onClick={handleBattleClick}
-          className="w-full max-w-sm mx-auto block py-4 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 rounded-xl text-white font-bold text-xl relative overflow-hidden"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          {/* Button shine effect */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-            animate={{ x: [-100, 400] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          />
-          <span className="relative z-10">Battle Now!</span>
-        </motion.button>
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="grid grid-cols-3 gap-4 p-6 relative z-10">
-        {bottomItems.map((item, index) => (
-          <motion.div
-            key={item.title}
-            className="relative flex flex-col items-center cursor-pointer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleBottomItemClick(item.title)}
-          >
-            {/* Hexagonal Icon */}
-            <div 
-              className="relative w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center mb-2 hover:from-cyan-300 hover:to-blue-500 transition-all duration-300"
-              style={{
-                clipPath: 'polygon(25% 0%, 75% 0%, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0% 75%, 0% 25%)'
-              }}
+        {/* Battle Now Button */}
+        <div className="px-6 mb-8 relative z-10">
+            <motion.button
+                onClick={handleBattleClick} // This now calls onBattleStart prop
+                className="w-full max-w-46 mx-auto block py-4 bg-gradient-to-r from-purple-400 to-cyan-300 text-white font-bold text-xl relative overflow-hidden"
+                style={{
+                clipPath: 'polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px)'
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
             >
-              <img src={item.image} alt={item.title} className="w-8 h-8" />
-              
-              {/* Badge */}
-              {item.badge && (
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                  {item.badge}
+                {/* Internal dashed outline */}
+                <div 
+                className="absolute inset-2 border border-dashed border-white/40"
+                style={{
+                    clipPath: 'polygon(8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%, 0% 8px)'
+                }}
+                />
+                
+                {/* Button shine effect */}
+                <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                animate={{ x: [-100, 400] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                />
+                
+                <span className="relative z-10">Battle Now!</span>
+            </motion.button>
+            </div>
+
+      {/* Bottom Navigation - Hexagonal Layout */}
+            <motion.div 
+            className="relative p-6 h-48"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            >
+            {/* Settings - Top Left */}
+            <motion.div
+                className="absolute top-0 left-8 flex flex-col items-center cursor-pointer"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.0 }}
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleBottomItemClick("SETTINGS")}
+            >
+                <img src="/assets/images/settings_icon.svg" alt="Settings" className="w-16 h-16" />
+            </motion.div>
+
+            {/* Decks - Top Right */}
+            <motion.div
+                className="absolute top-0 right-8 flex flex-col items-center cursor-pointer"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.1 }}
+                whileHover={{ scale: 1.05, rotate: -5 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleBottomItemClick("DECKS")}
+            >
+                <img src="/assets/images/decks.svg" alt="Decks" className="w-16 h-16" />
+            </motion.div>
+
+            {/* Inbox - Middle Left (between settings and profile) */}
+            <motion.div
+                className="absolute top-12 left-20 flex flex-col items-center cursor-pointer"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleBottomItemClick("INBOX")}
+            >
+                <img src="/assets/images/inbox.svg" alt="Inbox" className="w-16 h-16" />
+            </motion.div>
+
+            {/* Card - Middle Right (between marketplace and decks) */}
+            <motion.div
+                className="absolute top-12 right-18 flex flex-col items-center cursor-pointer"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.3 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleBottomItemClick("CARD")}
+            >
+                <img src="/assets/images/card_icon.svg" alt="Card" className="w-16 h-16" />
+            </motion.div>
+
+            {/* Profile - Bottom Left with Badge */}
+            <motion.div
+                className="absolute -bottom-2 left-2 flex flex-col items-center cursor-pointer"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.4 }}
+                whileHover={{ scale: 1.05, rotate: 3 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleBottomItemClick("PROFILE")}
+            >
+                <div className="relative">
+                <img src="/assets/images/profile_icon.svg" alt="Profile" className="w-28 h-28" />
                 </div>
-              )}
-            </div>
-            
-            {/* Label */}
-            <div className="text-white text-xs font-medium text-center">
-              {item.title}
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+
+            {/* Center Bottom Icon */}
+            <motion.div
+                className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.5 }}
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+            >
+                <motion.div 
+                className="w-12 h-12 bg-gray-600 flex items-center justify-center rounded"
+                animate={{ 
+                    boxShadow: [
+                    "0 0 0 rgba(75, 85, 99, 0)",
+                    "0 0 20px rgba(75, 85, 99, 0.5)",
+                    "0 0 0 rgba(75, 85, 99, 0)"
+                    ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                >
+               <img src="/assets/images/leave_icon.svg" alt="Marketplace" className="w-24 h-24" />
+                </motion.div>
+            </motion.div>
+
+            {/* Marketplace - Bottom Right */}
+            <motion.div
+                className="absolute -bottom-4 right-4 flex flex-col items-center cursor-pointer"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.6 }}
+                whileHover={{ scale: 1.05, rotate: -3 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleBottomItemClick("MARKETPLACE")}
+            >
+                <img src="/assets/images/marketplace.svg" alt="Marketplace" className="w-24 h-24" />
+            </motion.div>
+            </motion.div>
 
       {/* Floating particles */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full"
+            className="absolute w-1 h-1 bg-white rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -100, 0],
-              opacity: [0, 1, 0],
+              opacity: [0, 0.5, 0],
               scale: [0, 1, 0],
             }}
             transition={{
-              duration: 6,
+              duration: 4,
               repeat: Infinity,
               delay: Math.random() * 4,
               ease: "easeInOut"

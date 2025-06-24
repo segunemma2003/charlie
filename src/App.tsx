@@ -13,11 +13,13 @@ import { useTelegram } from './hooks/useTelegram'
 // Components
 import { LoadingScreen } from './components/intro/LoadingScreen'
 import { OnboardingScreen } from './components/intro/OnboardingScreen'
+import { BattleSelectionScreen } from './components/intro/BattleSelectionScreen'
+import { SearchingMatchScreen } from './components/game/Battle/components/SearchingMatchScreen'
+import { VSBattleScreen } from './components/game/Battle/components/VSBattleScreen'
 
 // Styles
 import '@rainbow-me/rainbowkit/styles.css'
 import './index.css'
-import { BattleSelectionScreen } from './components/intro/BattleSelectionScreen'
 
 // Create QueryClient
 const queryClient = new QueryClient({
@@ -29,9 +31,9 @@ const queryClient = new QueryClient({
   },
 })
 
-type AppState = 'loading' | 'onboarding' | 'game' |'battle'
+type AppState = 'loading' | 'onboarding' | 'battle' | 'game' | 'searching' | 'vs-battle'
 
-// Main Game Component Placeholder
+// Main Game Component Placeholder (keeping for future use)
 const GameApp = () => {
   const { user } = useTelegram()
   
@@ -108,17 +110,35 @@ const InnerApp = () => {
     const hasCompletedOnboarding = localStorage.getItem('charlie-unicorn-onboarding-complete')
     
     if (hasCompletedOnboarding === 'true') {
-      setAppState('game')
+      setAppState('battle')
     }
   }, [])
 
+  // Navigation handlers
   const handleLoadingComplete = () => {
     setAppState('onboarding')
   }
 
   const handleOnboardingComplete = () => {
     localStorage.setItem('charlie-unicorn-onboarding-complete', 'true')
+    setAppState('battle')
+  }
+
+  const handleBattleStart = () => {
+    setAppState('searching')
+  }
+
+  const handleMatchFound = () => {
+     console.log('handleMatchFound called, switching to vs-battle')
+    setAppState('vs-battle')
+  }
+
+  const handleBattleBegin = () => {
     setAppState('game')
+  }
+
+  const handleBackToBattle = () => {
+    setAppState('battle')
   }
 
   // Wait for Telegram to be ready
@@ -163,6 +183,45 @@ const InnerApp = () => {
           </motion.div>
         )}
 
+        {appState === 'battle' && (
+          <motion.div
+            key="battle"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <BattleSelectionScreen onBattleStart={handleBattleStart} />
+          </motion.div>
+        )}
+
+        {appState === 'searching' && (
+          <motion.div
+            key="searching"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SearchingMatchScreen 
+              onMatchFound={handleMatchFound}
+              onCancel={handleBackToBattle}
+            />
+          </motion.div>
+        )}
+
+        {appState === 'vs-battle' && (
+          <motion.div
+            key="vs-battle"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <VSBattleScreen onBattleStart={handleBattleBegin} />
+          </motion.div>
+        )}
+
         {appState === 'game' && (
           <motion.div
             key="game"
@@ -174,17 +233,6 @@ const InnerApp = () => {
             <GameApp />
           </motion.div>
         )}
-        {appState === 'battle' && (
-  <motion.div
-    key="battle"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    transition={{ duration: 0.3 }}
-  >
-    <BattleSelectionScreen />
-  </motion.div>
-)}
       </AnimatePresence>
     </RainbowKitProvider>
   )
