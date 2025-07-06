@@ -70,12 +70,12 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
             />
           ))}
         </div>
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute  bg-green inset-0 flex items-center justify-center">
           <div 
           
           >
             {/* VIC Character Image */}
-            <div className="relative w-40 h-40 flex items-center justify-center top-40 left-20">
+            <div className="relative w-40 h-40 flex items-center justify-center top-70 left-20">
               <img 
                 src="/assets/images/vic-character.svg" 
                 alt="VIC Character" 
@@ -141,11 +141,11 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
            
           >
             {/* WIZZY Character Image */}
-            <div className="relative w-80 h-80 flex items-center justify-center">
+            <div className="relative  top-160  right-20 -w-80 h-80 flex items-center justify-center">
               <img 
                 src="/assets/images/wizzy-character.svg" 
                 alt="WIZZY Character" 
-                className="w-64 h-64 object-contain drop-shadow-2xl"
+                className="w-80 h-80 object-contain drop-shadow-2xl"
               />
               
               {/* Character glow effect */}
@@ -175,7 +175,7 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
         <div 
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(135deg, 
+            background: `linear-gradient(155deg, 
               transparent 47%, 
               #000000 47%, 
               #ffffff 48%, 
@@ -188,6 +188,9 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
             )`
           }}
         />
+       
+
+       
         
         {/* VS Badge */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
