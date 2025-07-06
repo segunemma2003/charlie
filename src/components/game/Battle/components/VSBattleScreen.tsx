@@ -51,7 +51,7 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
       <img
         src="/assets/images/vic-character.svg"
         alt="VIC"
-        className="absolute z-20"
+        className="absolute z-20 animate-vic-in"
         style={{
           top: '4px',
           right: '10px',
@@ -125,7 +125,7 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
       <img
         src="/assets/images/wizzy-character.svg"
         alt="WIZZY"
-        className="absolute z-20"
+        className="absolute z-20 animate-wizzy-in"
         style={{
           bottom: '40px',
           left: '10px',
@@ -191,7 +191,7 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
           height: '35px',
           background: 'linear-gradient(90deg, #2563eb 0%, #22d3ee 100%)',
           borderRadius: '18px',
-          transform: 'translate(-50%, 0) skewY(-18deg)',
+          transform: 'translate(-50%, 0) skewY(-21deg)',
           boxShadow: '0 4px 16px 0 rgba(0,0,0,0.2)',
         }}
       >
@@ -212,6 +212,20 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
             opacity: 1;
           }
         }
+        @keyframes slideInRight {
+          0% { opacity: 0; transform: translateX(100%) scale(0.8); }
+          70% { opacity: 1; transform: translateX(-10%) scale(1.05); }
+          85% { transform: translateX(3%) scale(0.98); }
+          100% { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes slideInLeft {
+          0% { opacity: 0; transform: translateX(-100%) scale(0.8); }
+          70% { opacity: 1; transform: translateX(10%) scale(1.05); }
+          85% { transform: translateX(-3%) scale(0.98); }
+          100% { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        .animate-vic-in { animation: slideInRight 1.8s cubic-bezier(.68,-0.55,.27,1.55) both; }
+        .animate-wizzy-in { animation: slideInLeft 1.8s cubic-bezier(.68,-0.55,.27,1.55) both; }
       `}</style>
     </div>
   )
