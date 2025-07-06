@@ -173,7 +173,7 @@ const GameApp = () => {
 // Inner App Component (wrapped with providers)
 const InnerApp = () => {
   // ('loading')
-  const [appState, setAppState] = useState<AppState>('battle-ground')
+  const [appState, setAppState] = useState<AppState>('battle')
   const { isReady, colorScheme, user } = useTelegram()
 
   useEffect(() => {
