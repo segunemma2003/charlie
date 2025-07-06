@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import BattleGroundUpper from './BattleGroundUpper'
+import BattleGroundMiddle from './BattleGroundMiddle'
+import BattleGroundLower from './BattleGroundLower'
 
 interface BattleGroundSkeletonProps {
   onEnterBattle?: () => void;
@@ -17,6 +19,10 @@ export default function BattleGroundSkeleton({ onEnterBattle }: BattleGroundSkel
     <div className="relative w-full min-h-screen bg-cover bg-center" style={{ backgroundImage: 'url(/assets/images/battle-ground-bg.svg)' }}>
       {/* Upper 3D Section */}
       <BattleGroundUpper />
+      {/* Middle Section */}
+      <BattleGroundMiddle />
+      {/* Lower Section */}
+      <BattleGroundLower />
       {/* Top Section */}
       <div className="absolute top-0 left-0 w-full flex justify-between items-center p-2 sm:p-4">
         {/* Left Avatar */}

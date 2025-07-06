@@ -2,65 +2,77 @@ import React from 'react';
 
 export default function BattleGroundUpper() {
   return (
-    <div className="relative w-full flex flex-col items-center pt-2 pb-4" style={{ zIndex: 2 }}>
-      {/* Horizontal Bar with Arrow Notch */}
-      <div className="relative w-full flex items-center justify-between px-2 sm:px-6">
-        {/* Left: Pentagon with Card */}
-        <div className="flex flex-col items-center">
-          {/* Pentagon with Card */}
-          <div className="pentagon-box flex items-center justify-center mb-1">
-            {/* Card Placeholder */}
-            <div className="w-10 h-14 sm:w-14 sm:h-20 bg-gradient-to-br from-blue-400 to-purple-600 rounded-md shadow-lg" />
+    <div className="relative w-full max-w-screen overflow-hidden flex flex-col items-center pt-8 pb-4" style={{ zIndex: 2 }}>
+      {/* SVG Bar with V Notch */}
+      <div className="relative w-full flex items-center justify-center" style={{ height: 80 }}>
+        {/* Full-width SVG Bar */}
+        <svg className="absolute left-0 top-6 w-full h-16" viewBox="0 0 400 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="0,16 120,16 200,56 280,16 400,16" stroke="#6ee7b7" strokeWidth="3" fill="none" />
+        </svg>
+        {/* Glowing Score Ball in Notch */}
+        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/30 animate-pulse-glow"
+            style={{
+              backgroundImage: 'url(/assets/images/score-ball-bg.svg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              position: 'relative',
+            }}
+          >
+            {/* Glowing overlay */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '9999px',
+              background: 'radial-gradient(circle, rgba(34,197,94,0.3) 40%, rgba(168,139,250,0.2) 100%)',
+              zIndex: 1,
+              pointerEvents: 'none',
+            }} />
+            <span className="text-3xl sm:text-5xl font-bold text-white drop-shadow-lg relative z-10">0</span>
           </div>
         </div>
-        {/* Center: Horizontal Bar with Arrow Notch */}
-        <div className="relative flex-1 flex flex-col items-center">
-          {/* SVG Bar with Arrow Notch */}
-          <svg width="100%" height="48" viewBox="0 0 400 48" className="block" style={{ minWidth: 220, maxWidth: 480 }}>
-            <polygon points="0,0 400,0 400,32 210,32 200,48 190,32 0,32" fill="#23263a" stroke="#6ee7b7" strokeWidth="2" />
-          </svg>
-          {/* Glowing Score Ball on Notch */}
-          <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2 z-10">
-            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-green-400 to-purple-700 flex items-center justify-center shadow-2xl border-4 border-white/30 animate-pulse-glow">
-              <span className="text-2xl sm:text-4xl font-bold text-white drop-shadow-lg">0</span>
+        {/* Left Hexagon (no character) */}
+        <div className="absolute left-4 top-[-18px] flex flex-col items-center z-20">
+          <div className="hexagon-glow">
+            <div className="hexagon bg-gray-800 flex items-center justify-center shadow-xl" />
+          </div>
+          {/* Deck Info Badge, rotated and overlapping */}
+          <div className="flex items-center mt-[-10px] bg-blue-600 rounded-lg px-2 py-1 shadow-md text-white text-xs sm:text-base font-bold gap-1 rotate-[-15deg] -ml-4 z-30">
+            <span>36</span>
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect width="18" height="18" fill="#fff" opacity="0.2" rx="3"/><rect x="3" y="3" width="12" height="12" rx="2" fill="#3b82f6"/></svg>
+            <span>45</span>
+          </div>
+        </div>
+        {/* Right Hexagon with Settings (no character) */}
+        <div className="absolute right-4 top-[-18px] flex flex-col items-center z-20">
+          <div className="hexagon-glow">
+            <div className="hexagon bg-gray-800 flex items-center justify-center shadow-xl">
+              {/* Settings Icon Placeholder */}
+              <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3b82f6" opacity="0.2"/><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" fill="#fff"/><path d="M19.4 15a1.65 1.65 0 01-.33 1.82l-1.43 1.43a1.65 1.65 0 01-1.82.33 1.65 1.65 0 01-1-1.51V17a1.65 1.65 0 01-1.65-1.65h-.7A1.65 1.65 0 017 17v.07a1.65 1.65 0 01-1 1.51 1.65 1.65 0 01-1.82-.33l-1.43-1.43a1.65 1.65 0 01-.33-1.82 1.65 1.65 0 011.51-1H7a1.65 1.65 0 011.65-1.65v-.7A1.65 1.65 0 017 7H6.93a1.65 1.65 0 01-1.51-1A1.65 1.65 0 015.75 4.2l1.43-1.43a1.65 1.65 0 011.82-.33 1.65 1.65 0 011 1.51V7a1.65 1.65 0 011.65 1.65h.7A1.65 1.65 0 0117 7V6.93a1.65 1.65 0 011-1.51 1.65 1.65 0 011.82.33l1.43 1.43a1.65 1.65 0 01.33 1.82 1.65 1.65 0 01-1.51 1H17a1.65 1.65 0 01-1.65 1.65v.7A1.65 1.65 0 0117 17h.07a1.65 1.65 0 011.51 1z" fill="#fff"/></svg>
             </div>
           </div>
         </div>
-        {/* Right: Pentagon with Settings Icon */}
-        <div className="flex flex-col items-center">
-          <div className="pentagon-box flex items-center justify-center mb-1">
-            {/* Settings Icon Placeholder */}
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><polygon points="12,2 22,8 18,22 6,22 2,8" fill="#23263a" stroke="#6ee7b7" strokeWidth="2"/><g><circle cx="12" cy="12" r="4" fill="#6ee7b7"/></g></svg>
-          </div>
-        </div>
       </div>
-      {/* Below Bar: Left - Stack of Cards (reshuffle placeholder) */}
-      <div className="absolute left-4 top-16 flex flex-col items-center">
-        <div className="flex flex-col items-center space-y-[-16px] cursor-pointer">
-          {/* Stack of Cards */}
-          {[0,1,2].map(i => (
-            <div key={i} className="w-10 h-14 sm:w-14 sm:h-20 bg-gray-700 rounded-md border-2 border-blue-400/40 shadow-md" style={{ marginTop: i === 0 ? 0 : -12, zIndex: 3-i }} />
-          ))}
-        </div>
-        <div className="mt-1 text-xs text-blue-300">(Reshuffle)</div>
+      {/* Fanned Cards below the score ball (single grouped image, behind the ball) */}
+      <div className="absolute left-1/2 top-0 transform -translate-x-1/2 z-0" style={{ marginTop: 40 }}>
+        <img 
+          src="/assets/images/three-card.svg" 
+          alt="Card Deck" 
+          style={{ maxWidth: 180, width: '100%', height: 'auto' }}
+        />
       </div>
-      {/* Below Bar: Right - Placeholder for image/design */}
-      <div className="absolute right-4 top-16 flex flex-col items-center">
-        <div className="w-14 h-14 sm:w-20 sm:h-20 bg-gray-800/60 rounded-lg border-2 border-dashed border-blue-400 flex items-center justify-center">
-          {/* Placeholder for right-side image/design */}
-        </div>
-      </div>
-      {/* Pentagon CSS */}
+      {/* Hexagon CSS */}
       <style>{`
-        .pentagon-box {
+        .hexagon {
           width: 48px;
           height: 48px;
-          clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-          background: #23263a;
-          border: 2px solid #6ee7b7;
+          clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
         }
         @media (min-width: 640px) {
-          .pentagon-box { width: 64px; height: 64px; }
+          .hexagon { width: 72px; height: 72px; }
+        }
+        .hexagon-glow {
+          filter: drop-shadow(0 0 12px #60a5fa88) drop-shadow(0 0 24px #a78bfa44);
         }
         .animate-pulse-glow {
           animation: pulseGlow 2s infinite alternate;
@@ -72,4 +84,4 @@ export default function BattleGroundUpper() {
       `}</style>
     </div>
   );
-} 
+}
