@@ -25,44 +25,72 @@ function FlippableCard() {
 function DeckOfCards() {
   const [cards, setCards] = useState([
     { id: 1, image: '/assets/images/unicorn-head-icon.svg' },
-    { id: 2, image: null },
-    { id: 3, image: null },
+    { id: 2, image: '' },
+    { id: 3, image: '' },
+    { id: 4, image: '' },
+    { id: 5, image: '' },
   ]);
+  const [isShuffling, setIsShuffling] = useState(false);
 
   function shuffleDeck() {
-    setCards(prev => {
-      const arr = [...prev];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    });
+    setIsShuffling(true);
+    setTimeout(() => {
+      setCards(prev => {
+        const arr = [...prev];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      });
+      setIsShuffling(false);
+    }, 400); // Animation duration
   }
 
   return (
     <div className="flex flex-col items-center">
       <div
-        className="relative w-16 h-24 sm:w-24 sm:h-36 cursor-pointer group"
+        className={`relative w-16 h-24 sm:w-24 sm:h-36 cursor-pointer group select-none ${isShuffling ? 'animate-shuffle' : ''}`}
         onClick={shuffleDeck}
         title="Shuffle Deck"
+        style={{ perspective: 600 }}
       >
-        {cards.map((card, i) => (
-          <div
-            key={card.id}
-            className="absolute left-0 top-0 w-12 h-18 sm:w-24 sm:h-36 rounded-xl border-2 border-cyan-400 bg-[#232544] flex items-center justify-center transition-transform duration-200 group-active:scale-95"
-            style={{
-              zIndex: 10 - i,
-              transform: `translateX(${i * 6}px) translateY(-${i * 4}px)`,
-              boxShadow: '0 2px 8px #23263a44',
-            }}
-          >
-            {card.image && (
-              <img src={card.image} alt="Character One" className="w-10 h-10 sm:w-16 sm:h-16 object-contain" />
-            )}
-          </div>
-        ))}
+        {cards.map((card, i) => {
+          // Top card gets the unicorn image, others get blank or back
+          const isTop = i === 0;
+          return (
+            <div
+              key={card.id}
+              className={`absolute left-0 top-0 w-12 h-18 sm:w-24 sm:h-36 rounded-xl border-2 border-cyan-400 bg-[#232544] flex items-center justify-center transition-transform duration-300 ease-in-out ${isShuffling ? 'shuffle-card' : ''}`}
+              style={{
+                zIndex: 10 - i,
+                transform: isShuffling
+                  ? `translateX(${(i - 2) * 18}px) rotate(${(i - 2) * 10}deg) scale(1.05)`
+                  : `translateX(${i * 6}px) translateY(-${i * 4}px)`,
+                boxShadow: '0 2px 8px #23263a44',
+              }}
+            >
+              {isTop && card.image && (
+                <img src={card.image} alt="Character One" className="w-10 h-10 sm:w-16 sm:h-16 object-contain" />
+              )}
+              {!isTop && (
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-cyan-900/30 rounded" />
+              )}
+            </div>
+          );
+        })}
       </div>
+      <style>{`
+        @keyframes shuffleFan {
+          0% { }
+          40% { }
+          60% { }
+          100% { }
+        }
+        .animate-shuffle .shuffle-card {
+          animation: shuffleFan 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+        }
+      `}</style>
     </div>
   );
 }
