@@ -47,10 +47,19 @@ function DeckOfCards10() {
 export default function BattleGroundMiddle() {
   // Timer state
   const [timer, setTimer] = useState(30);
+  const [pulse, setPulse] = useState(false);
+  const [showGo, setShowGo] = useState(false);
   useEffect(() => {
     if (timer > 0) {
-      const interval = setInterval(() => setTimer(t => t - 1), 1000);
+      const interval = setInterval(() => {
+        setPulse(true);
+        setTimeout(() => setPulse(false), 350);
+        setTimer(t => t - 1);
+      }, 1000);
       return () => clearInterval(interval);
+    } else if (timer === 0) {
+      setShowGo(true);
+      setTimeout(() => setShowGo(false), 1800);
     }
   }, [timer]);
 
@@ -81,32 +90,57 @@ export default function BattleGroundMiddle() {
         <img src={SETTINGS_IMG} alt="Settings" className="w-22 h-22 sm:w-20 sm:h-20 object-contain" />
       </div>
       {/* Bottom Center: Beautiful Animated Hexagon Timer */}
-      <div className="absolute left-1/2 -bottom-10 bg-[#232544] transform -translate-x-1/2 -translate-y-1/2 z-20">
-        <svg width="90" height="80" viewBox="0 0 90 80" className="animate-pulse-glow">
+      <div
+        className={`absolute left-1/2 -bottom-10 bg-[#232544] transform -translate-x-1/2 -translate-y-1/2 z-20 group focus:outline-none focus:ring-2 focus:ring-cyan-400`}
+        tabIndex={0}
+        aria-label={timer > 0 ? `${timer} seconds remaining` : 'Time up!'}
+      >
+        <svg
+          width="110" height="100" viewBox="0 0 90 80"
+          className={`transition-all duration-300 ${pulse ? 'animate-timer-pulse' : ''} group-hover:scale-110 group-hover:drop-shadow-xl`}
+          style={{ filter: showGo ? 'drop-shadow(0 0 32px #facc15)' : undefined }}
+        >
           <defs>
             <linearGradient id="hexGradient" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#a5b4fc" />
               <stop offset="100%" stopColor="#38bdf8" />
             </linearGradient>
+            <linearGradient id="hexGradient2" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#38bdf8" />
+              <stop offset="100%" stopColor="#a5b4fc" />
+            </linearGradient>
             <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="6" result="coloredBlur" />
+              <feGaussianBlur stdDeviation="8" result="coloredBlur" />
               <feMerge>
                 <feMergeNode in="coloredBlur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
           </defs>
+          {/* Animated border */}
           <polygon
             points="25,10 65,10 80,35 65,60 25,60 10,35"
-            fill="url(#232544)"
-            stroke="#fff"
-            strokeWidth="4"
+            fill="url(#hexGradient)"
+            stroke="url(#hexGradient2)"
+            strokeWidth="5"
             filter="url(#glow)"
-            opacity="0.95"
+            opacity="0.98"
+            className="animate-hex-border"
           />
+          {/* Flash burst when GO! */}
+          {showGo && (
+            <g>
+              <circle cx="45" cy="35" r="32" fill="#facc15" opacity="0.25">
+                <animate attributeName="r" from="32" to="50" dur="0.7s" fill="freeze" />
+                <animate attributeName="opacity" from="0.25" to="0" dur="0.7s" fill="freeze" />
+              </circle>
+            </g>
+          )}
         </svg>
-        <div className="absolute left-1/2 top-[45%] transform -translate-x-1/2 -translate-y-1/2 text-white font-bold text-sm drop-shadow-lg select-none whitespace-nowrap">
-          {timer} Sec
+        <div
+          className={`absolute left-1/2 top-[45%] transform -translate-x-1/2 -translate-y-1/2 text-white font-extrabold text-2xl drop-shadow-lg select-none whitespace-nowrap transition-all duration-300 ${pulse ? 'scale-125 opacity-80' : 'scale-100 opacity-100'} ${showGo ? 'text-yellow-300 animate-go-bounce' : ''}`}
+        >
+          {showGo ? 'GO!' : `${timer} Sec`}
         </div>
         <style>{`
           .animate-pulse-glow {
@@ -115,6 +149,32 @@ export default function BattleGroundMiddle() {
           @keyframes pulseGlowHex {
             0% { filter: drop-shadow(0 0 12px #38bdf8cc) drop-shadow(0 0 24px #a5b4fccc); }
             100% { filter: drop-shadow(0 0 32px #38bdf8cc) drop-shadow(0 0 48px #a5b4fccc); }
+          }
+          .animate-timer-pulse {
+            animation: timerPulse 0.35s cubic-bezier(.68,-0.55,.27,1.55);
+          }
+          @keyframes timerPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          .animate-hex-border {
+            animation: hexBorderRotate 3s linear infinite;
+            transform-origin: 45px 35px;
+          }
+          @keyframes hexBorderRotate {
+            0% { stroke-dasharray: 0 200; }
+            50% { stroke-dasharray: 100 100; }
+            100% { stroke-dasharray: 0 200; }
+          }
+          .animate-go-bounce {
+            animation: goBounce 1.2s cubic-bezier(.68,-0.55,.27,1.55);
+          }
+          @keyframes goBounce {
+            0% { transform: scale(1); color: #fff; }
+            30% { transform: scale(1.5); color: #facc15; }
+            60% { transform: scale(1.2); color: #facc15; }
+            100% { transform: scale(1); color: #fff; }
           }
         `}</style>
       </div>
