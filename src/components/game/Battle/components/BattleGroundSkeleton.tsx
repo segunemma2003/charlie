@@ -13,7 +13,7 @@ export default function BattleGroundSkeleton({ onEnterBattle }: BattleGroundSkel
   }, [onEnterBattle]);
 
   return (
-    <div className="relative w-full min-h-screen bg-cover bg-center" style={{ backgroundImage: 'url(/assets/images/space-bg.jpg)' }}>
+    <div className="relative w-full min-h-screen bg-cover bg-center" style={{ backgroundImage: 'url(/assets/images/battle-ground-bg.svg)' }}>
       {/* Top Section */}
       <div className="absolute top-0 left-0 w-full flex justify-between items-center p-2 sm:p-4">
         {/* Left Avatar */}

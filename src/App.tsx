@@ -16,6 +16,7 @@ import { OnboardingScreen } from './components/intro/OnboardingScreen'
 import { BattleSelectionScreen } from './components/intro/BattleSelectionScreen'
 import { SearchingMatchScreen } from './components/game/Battle/components/SearchingMatchScreen'
 import { VSBattleScreen } from './components/game/Battle/components/VSBattleScreen'
+import BattleGroundSkeleton from './components/game/Battle/components/BattleGroundSkeleton'
 
 // Styles
 import '@rainbow-me/rainbowkit/styles.css'
@@ -100,7 +101,7 @@ const queryClient = new QueryClient({
   },
 })
 
-type AppState = 'loading' | 'onboarding' | 'battle' | 'game' | 'searching' | 'vs-battle'
+type AppState = 'loading' | 'onboarding' | 'battle' | 'game' | 'searching' | 'vs-battle' | 'battle-ground'
 
 // Main Game Component Placeholder (keeping for future use)
 const GameApp = () => {
@@ -204,7 +205,7 @@ const InnerApp = () => {
   }
 
   const handleBattleBegin = () => {
-    // setAppState('game')
+    setAppState('battle-ground')
   }
 
   const handleBackToBattle = () => {
@@ -292,6 +293,18 @@ const InnerApp = () => {
           </motion.div>
         )}
 
+        {appState === 'battle-ground' && (
+          <motion.div
+            key="battle-ground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <BattleGroundSkeleton onEnterBattle={() => setAppState('game')} />
+          </motion.div>
+        )}
+
         {appState === 'game' && (
           <motion.div
             key="game"
@@ -300,7 +313,7 @@ const InnerApp = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <GameApp />
+            <BattleGroundSkeleton />
           </motion.div>
         )}
       </AnimatePresence>
