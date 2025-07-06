@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import BattleGroundUpper from './BattleGroundUpper'
 
 interface BattleGroundSkeletonProps {
   onEnterBattle?: () => void;
@@ -14,6 +15,8 @@ export default function BattleGroundSkeleton({ onEnterBattle }: BattleGroundSkel
 
   return (
     <div className="relative w-full min-h-screen bg-cover bg-center" style={{ backgroundImage: 'url(/assets/images/battle-ground-bg.svg)' }}>
+      {/* Upper 3D Section */}
+      <BattleGroundUpper />
       {/* Top Section */}
       <div className="absolute top-0 left-0 w-full flex justify-between items-center p-2 sm:p-4">
         {/* Left Avatar */}
