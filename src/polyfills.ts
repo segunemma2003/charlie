@@ -1,4 +1,4 @@
-// src/polyfills.ts - Optimized for Node 23
+// src/polyfills.ts - Fixed infinite loop issue
 import { Buffer } from 'buffer'
 
 // Add Buffer and process to global scope for Web3 compatibility
@@ -20,7 +20,7 @@ if (typeof window !== 'undefined') {
 
 // BigInt JSON serialization (Node 23 native support)
 if (typeof BigInt !== 'undefined' && typeof BigInt.prototype.toJSON === 'undefined') {
-  BigInt.prototype.toJSON = function() {
+  (BigInt.prototype as any).toJSON = function(this: bigint): string {
     return this.toString()
   }
 }
@@ -39,7 +39,8 @@ Math.pow = function(base: any, exponent: any): number {
         console.warn('BigInt base below safe integer range in Math.pow')
         base = Number.MIN_SAFE_INTEGER
       } else {
-        base = Number(base)
+        // Use the original Number constructor to avoid recursion
+        base = originalNumberConstructor(base)
       }
     }
     
@@ -51,7 +52,8 @@ Math.pow = function(base: any, exponent: any): number {
         console.warn('BigInt exponent below safe integer range in Math.pow')
         exponent = Number.MIN_SAFE_INTEGER
       } else {
-        exponent = Number(exponent)
+        // Use the original Number constructor to avoid recursion
+        exponent = originalNumberConstructor(exponent)
       }
     }
     
@@ -70,8 +72,10 @@ Math.pow = function(base: any, exponent: any): number {
   }
 }
 
-// Enhanced Number constructor for Node 23
+// Store the original Number constructor BEFORE creating the enhanced version
 const originalNumberConstructor = Number
+
+// Enhanced Number constructor for Node 23 - NO RECURSION
 const enhancedNumber = function(value?: any): number {
   if (arguments.length === 0) return 0
   
@@ -86,44 +90,20 @@ const enhancedNumber = function(value?: any): number {
         console.warn('BigInt value below MIN_SAFE_INTEGER, clamping to safe value')
         return Number.MIN_SAFE_INTEGER
       }
-      return Number(value)
+      // Use the ORIGINAL Number constructor to avoid infinite recursion
+      return originalNumberConstructor(value)
     } catch (error) {
       console.warn('BigInt to Number conversion failed:', error)
       return 0
     }
   }
   
+  // For all other values, use the original Number constructor
   return originalNumberConstructor(value)
-}
+} as NumberConstructor
 
-// Preserve all Number static properties and methods
-Object.setPrototypeOf(enhancedNumber, originalNumberConstructor)
-Object.defineProperty(enhancedNumber, 'prototype', {
-  value: originalNumberConstructor.prototype,
-  writable: false,
-  enumerable: false,
-  configurable: false
-})
-
-// Copy all static methods
-Object.getOwnPropertyNames(originalNumberConstructor).forEach(prop => {
-  if (prop !== 'length' && prop !== 'name' && prop !== 'prototype') {
-    Object.defineProperty(enhancedNumber, prop, {
-      value: (originalNumberConstructor as any)[prop],
-      writable: false,
-      enumerable: false,
-      configurable: false
-    })
-  }
-})
-
-// Replace global Number constructor
-Object.defineProperty(window, 'Number', {
-  value: enhancedNumber,
-  writable: false,
-  enumerable: false,
-  configurable: false
-})
+// DON'T replace the global Number constructor - this was causing the infinite loop
+// Instead, just override Math.pow which is where the actual error occurs
 
 // Add support for crypto if needed (Node 23 has excellent crypto support)
 if (typeof window !== 'undefined' && !window.crypto && typeof globalThis !== 'undefined' && globalThis.crypto) {
@@ -131,11 +111,13 @@ if (typeof window !== 'undefined' && !window.crypto && typeof globalThis !== 'un
 }
 
 // Performance optimization: Use Node 23's native BigInt64Array if available
-if (typeof BigInt64Array !== 'undefined') {
-  window.BigInt64Array = BigInt64Array
-}
-if (typeof BigUint64Array !== 'undefined') {
-  window.BigUint64Array = BigUint64Array
+if (typeof window !== 'undefined') {
+  if (typeof BigInt64Array !== 'undefined') {
+    window.BigInt64Array = BigInt64Array
+  }
+  if (typeof BigUint64Array !== 'undefined') {
+    window.BigUint64Array = BigUint64Array
+  }
 }
 
 console.log('🦄 Charlie Unicorn Web3 polyfills loaded successfully!')

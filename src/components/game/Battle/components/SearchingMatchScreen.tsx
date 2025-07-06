@@ -12,34 +12,56 @@ export const SearchingMatchScreen: React.FC<SearchingMatchScreenProps> = ({ onMa
   const [searchTime, setSearchTime] = useState(0)
   const [loopCount, setLoopCount] = useState(0)
 
-  useEffect(() => {
-  let timer: NodeJS.Timeout
+//   useEffect(() => {
+//   let timer: NodeJS.Timeout
 
-  const startTimers = () => {
-    timer = setInterval(() => {
-      setSearchTime(prev => {
-        const newTime = prev + 1
-        console.log('Search time:', newTime) // Debug log
+//   const startTimers = () => {
+//     timer = setInterval(() => {
+//       setSearchTime(prev => {
+//         const newTime = prev + 1
+//         console.log('Search time:', newTime) // Debug log
         
-        // Check if we've reached 12 seconds (4 loops)
-        if (newTime >= 12) {
-          console.log('12 seconds reached, triggering match found') // Debug log
-          clearInterval(timer)
-          hapticFeedback('impact', 'medium')
-          onMatchFound()
-        }
+//         // Check if we've reached 12 seconds (4 loops)
+//         if (newTime >= 12) {
+//           console.log('12 seconds reached, triggering match found') // Debug log
+//           clearInterval(timer)
+//           hapticFeedback('impact', 'medium')
+//           onMatchFound()
+//         }
         
-        return newTime
-      })
+//         return newTime
+//       })
+//     }, 1000)
+//   }
+
+//   startTimers()
+
+//   return () => {
+//     if (timer) clearInterval(timer)
+//   }
+// }, [onMatchFound, hapticFeedback])
+ 
+
+ useEffect(() => {
+    const timer = setInterval(() => {
+      setSearchTime(prev => prev + 1)
     }, 1000)
-  }
 
-  startTimers()
+    return () => clearInterval(timer)
+  }, [])
 
-  return () => {
-    if (timer) clearInterval(timer)
-  }
-}, [onMatchFound, hapticFeedback])
+ useEffect(() => {
+    const currentLoop = Math.floor(searchTime / 3) + 1
+    setLoopCount(Math.min(currentLoop, 4))
+  }, [searchTime])
+
+useEffect(() => {
+    if (searchTime >= 12) {
+      console.log('12 seconds reached, triggering match found')
+      hapticFeedback('impact', 'medium')
+      onMatchFound()
+    }
+  }, [searchTime, onMatchFound, hapticFeedback])
 
 // Update loop count based on search time
 useEffect(() => {

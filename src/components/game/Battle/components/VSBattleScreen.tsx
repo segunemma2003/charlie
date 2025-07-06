@@ -44,146 +44,185 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
   }, [countdown, onBattleStart])
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-black" >
       {/* VIC Section - Top Half */}
-      <div className="h-1/2 relative">
-        {/* Bubble Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-400 via-blue-500 to-purple-600">
-          {/* Animated Bubble Pattern */}
-          <div className="absolute inset-0">
-            {[...Array(100)].map((_, i) => (
-              <div
-                key={`vic-bubble-${i}`}
-                className="absolute rounded-full bg-gradient-to-br from-cyan-300/40 to-purple-300/40"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  width: `${8 + Math.random() * 16}px`,
-                  height: `${8 + Math.random() * 16}px`,
-                  animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 2}s`
-                }}
-              />
-            ))}
+      <div className="h-1/2 relative ">
+        <div 
+          className="absolute inset-0 w-full h-full bg-[url(/assets/images/upper.svg)] bg-cover bg-center bg-no-repeat"
+         
+        >
           </div>
-        </div>
+          <div className="absolute inset-0 bg-blue-500/20"></div>
 
-        {/* VIC Character */}
+            <div className="absolute inset-0">
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={`vic-dot-${i}`}
+              className="absolute rounded-full bg-white/30"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                width: `${4 + Math.random() * 8}px`,
+                height: `${4 + Math.random() * 8}px`,
+                animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
+                animationDelay: `${Math.random() * 2}s`
+              }}
+            />
+          ))}
+        </div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div 
-              className={`w-64 h-80 mx-auto mb-4 relative transition-transform duration-500 ${
-                showClash ? 'animate-bounce' : ''
-              }`}
-            >
-              {/* Character Display */}
-              <div className="w-full h-full bg-white/10 backdrop-blur-sm rounded-3xl border-4 border-white/30 shadow-2xl overflow-hidden">
-                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-8xl mb-4">💪</div>
-                    <div className="text-6xl">🦄</div>
-                    <div className="text-white font-bold text-xl mt-2 drop-shadow-lg">VIC</div>
-                  </div>
-                </div>
-              </div>
+          <div 
+          
+          >
+            {/* VIC Character Image */}
+            <div className="relative w-40 h-40 flex items-center justify-center top-40 left-20">
+              <img 
+                src="/assets/images/vic-character.svg" 
+                alt="VIC Character" 
+                className="w-80 h-80 object-contain drop-shadow-2xl"
+              />
+              
+              {/* Character glow effect */}
+              <div className="absolute inset-0 bg-blue-400/30 rounded-full blur-xl -z-10" />
             </div>
           </div>
         </div>
 
-        {/* VIC Label */}
-        <div className="absolute top-4 left-0 right-0">
-          <div className="bg-gradient-to-r from-green-400 to-blue-500 mx-auto w-fit px-6 py-2 rounded-full shadow-lg transform -skew-x-12">
-            <span className="text-white font-bold text-xl transform skew-x-12 block">VIC</span>
-          </div>
-        </div>
-      </div>
-
-      {/* WIZZY Section - Bottom Half */}
-      <div className="h-1/2 relative">
-        {/* Red Background with Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-t from-red-600 via-red-500 to-orange-500">
-          {/* Animated Dot Pattern */}
-          <div className="absolute inset-0">
-            {[...Array(80)].map((_, i) => (
-              <div
-                key={`wizzy-dot-${i}`}
-                className="absolute rounded-full bg-gradient-to-br from-yellow-300/30 to-red-300/30"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  width: `${6 + Math.random() * 12}px`,
-                  height: `${6 + Math.random() * 12}px`,
-                  animation: `pulse ${2 + Math.random() * 3}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 2}s`
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* WIZZY Character - Upside Down */}
-        <div className="absolute inset-0 flex items-center justify-center transform rotate-180">
-          <div className="text-center">
-            <div 
-              className={`w-64 h-80 mx-auto mb-4 relative transition-transform duration-500 ${
-                showClash ? 'animate-bounce' : ''
-              }`}
-            >
-              {/* Character Display */}
-              <div className="w-full h-full bg-white/10 backdrop-blur-sm rounded-3xl border-4 border-white/30 shadow-2xl overflow-hidden">
-                <div className="w-full h-full bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-6xl mb-2">🎧</div>
-                    <div className="text-8xl mb-4">🦄</div>
-                    <div className="text-6xl">🤘</div>
-                    <div className="text-white font-bold text-xl mt-2 drop-shadow-lg">WIZZY</div>
-                  </div>
+            <div className="absolute top-8 left-0 right-0 z-10">
+              <div className="mx-auto w-fit">
+                <div 
+                  className="bg-gradient-to-r from-blue-600 to-cyan-400 px-8 py-3 relative"
+                  style={{
+                    clipPath: 'polygon(15px 0%, 100% 0%, calc(100% - 15px) 100%, 0% 100%)'
+                  }}
+                >
+                  <span className="text-white font-bold text-2xl tracking-wider">VIC</span>
                 </div>
               </div>
+            </div>
+        {/* UPPER.SVG Background Image */}
+       </div>
+
+             {/* WIZZY Section - Bottom Half */}
+      <div className="h-1/2 relative">
+        {/* LOWER.SVG Background Image */}
+        <div 
+          className="absolute inset-0 w-full h-full top-48 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url("/assets/images/lower.svg")',
+            backgroundColor: '#dc2626' // Fallback red color if image doesn't load
+          }}
+        />
+        
+        {/* Light red color tint (much lighter) */}
+        <div className="absolute inset-0 bg-red-500/20" />
+        
+        {/* Animated pattern dots */}
+        <div className="absolute inset-0">
+          {[...Array(40)].map((_, i) => (
+            <div
+              key={`wizzy-pattern-${i}`}
+              className="absolute rounded-full bg-yellow-400/30"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                width: `${6 + Math.random() * 12}px`,
+                height: `${6 + Math.random() * 12}px`,
+                animation: `pulse ${2 + Math.random() * 3}s ease-in-out infinite`,
+                animationDelay: `${Math.random() * 2}s`
+              }}
+            />
+          ))}
+        </div>
+
+        {/* WIZZY Character */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div 
+           
+          >
+            {/* WIZZY Character Image */}
+            <div className="relative w-80 h-80 flex items-center justify-center">
+              <img 
+                src="/assets/images/wizzy-character.svg" 
+                alt="WIZZY Character" 
+                className="w-64 h-64 object-contain drop-shadow-2xl"
+              />
+              
+              {/* Character glow effect */}
+              <div className="absolute inset-0 bg-red-400/30 rounded-full blur-xl -z-10" />
             </div>
           </div>
         </div>
 
         {/* WIZZY Label */}
-        <div className="absolute bottom-4 left-0 right-0 transform rotate-180">
-          <div className="bg-gradient-to-r from-blue-500 to-green-400 mx-auto w-fit px-6 py-2 rounded-full shadow-lg transform skew-x-12">
-            <span className="text-white font-bold text-xl transform -skew-x-12 block">WIZZY</span>
+        <div className="absolute bottom-8 left-0 right-0 z-10">
+          <div className="mx-auto w-fit">
+            <div 
+              className="bg-gradient-to-r from-red-600 to-orange-400 px-8 py-3 relative"
+              style={{
+                clipPath: 'polygon(0% 0%, calc(100% - 15px) 0%, 100% 100%, 15px 100%)'
+              }}
+            >
+              <span className="text-white font-bold text-2xl tracking-wider">WIZZY</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Diagonal VS Divider */}
       <div className="absolute inset-0 z-20 pointer-events-none">
+        {/* Main diagonal split line */}
         <div 
           className="absolute inset-0"
           style={{
             background: `linear-gradient(135deg, 
-              transparent 48%, 
-              #000000 48%, 
-              #ff4444 49%, 
-              #ff6644 50%, 
-              #4444ff 50%, 
-              #6644ff 51%, 
-              #000000 52%, 
-              transparent 52%
+              transparent 47%, 
+              #000000 47%, 
+              #ffffff 48%, 
+              #000000 49%, 
+              #ffffff 50%, 
+              #000000 51%, 
+              #ffffff 52%, 
+              #000000 53%, 
+              transparent 53%
             )`
           }}
         />
         
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -rotate-45">
-          <div className="bg-black px-8 py-3 rounded-full border-4 border-white shadow-2xl transform rotate-45">
-            <span className="text-cyan-400 font-bold text-4xl tracking-wider">VS</span>
+        {/* VS Badge */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="relative">
+            {/* Outer ring */}
+            <div className="w-24 h-24 bg-black rounded-full border-4 border-white shadow-2xl flex items-center justify-center">
+              {/* Inner glow */}
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-2xl tracking-wider">VS</span>
+              </div>
+            </div>
+            
+            {/* Rotating ring effect */}
+            {showClash && (
+              <div className="absolute inset-0 w-24 h-24 border-4 border-yellow-400 rounded-full animate-spin" />
+            )}
           </div>
         </div>
       </div>
 
+
       {/* Lightning Effects - Only show during clash */}
       {showClash && (
         <div className="absolute inset-0 pointer-events-none z-30">
-          <div className="absolute top-1/3 left-1/3 text-6xl animate-pulse text-yellow-300 transform -rotate-45">⚡</div>
-          <div className="absolute bottom-1/3 right-1/3 text-6xl animate-pulse text-yellow-400 transform -rotate-45">⚡</div>
-          <div className="absolute top-1/2 left-1/4 text-4xl animate-bounce text-yellow-300">⚡</div>
-          <div className="absolute top-1/2 right-1/4 text-4xl animate-bounce text-yellow-400">⚡</div>
+          {/* Lightning bolts */}
+          <div className="absolute top-1/4 left-1/4 text-6xl animate-pulse text-yellow-300 transform -rotate-45">⚡</div>
+          <div className="absolute top-1/4 right-1/4 text-6xl animate-pulse text-yellow-400 transform rotate-45">⚡</div>
+          <div className="absolute bottom-1/4 left-1/3 text-6xl animate-pulse text-yellow-300 transform rotate-12">⚡</div>
+          <div className="absolute bottom-1/4 right-1/3 text-6xl animate-pulse text-yellow-400 transform -rotate-12">⚡</div>
+          
+          {/* Energy waves */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="w-32 h-32 border-4 border-yellow-400/50 rounded-full animate-ping" />
+            <div className="absolute inset-4 border-4 border-cyan-400/50 rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
+          </div>
         </div>
       )}
 
@@ -194,7 +233,7 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
             key={countdown}
             className="text-white font-bold text-9xl drop-shadow-2xl"
             style={{
-              textShadow: '0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.6)',
+              textShadow: '0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.4)',
               animation: 'countdownPulse 1s ease-out'
             }}
           >
@@ -232,14 +271,4 @@ export const VSBattleScreen: React.FC<VSBattleScreenProps> = ({ onBattleStart })
   )
 }
 
-// Simple usage - just pass onBattleStart callback
-const VSBattleDemo = () => {
-  const handleBattleStart = () => {
-    console.log('Battle started!')
-    // Add your battle start logic here
-  }
-
-  return (
-    <VSBattleScreen onBattleStart={handleBattleStart} />
-  )
-}
+export default VSBattleScreen

@@ -21,6 +21,75 @@ import { VSBattleScreen } from './components/game/Battle/components/VSBattleScre
 import '@rainbow-me/rainbowkit/styles.css'
 import './index.css'
 
+
+import { Component, ErrorInfo, ReactNode } from 'react'
+
+interface ErrorBoundaryState {
+  hasError: boolean
+  error?: Error
+}
+
+class BigIntErrorBoundary extends Component<
+  { children: ReactNode },
+  ErrorBoundaryState
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error }
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('BigInt Error Boundary caught an error:', error, errorInfo)
+    
+    // Check if it's a BigInt-related error
+    if (error.message?.includes('BigInt') || 
+        error.message?.includes('convert') || 
+        error.message?.includes('Maximum call stack size exceeded')) {
+      // Log specific BigInt error
+      console.error('BigInt/Stack overflow error detected:', {
+        message: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack
+      })
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-black flex items-center justify-center p-6">
+          <div className="text-center text-white max-w-md">
+            <h2 className="text-2xl font-bold mb-4">Something went wrong</h2>
+            <p className="text-white/80 mb-6">
+              {this.state.error?.message?.includes('BigInt') || 
+               this.state.error?.message?.includes('Maximum call stack size exceeded')
+                ? 'There was an issue with blockchain data processing. Please refresh the page.'
+                : 'An unexpected error occurred.'
+              }
+            </p>
+            <button
+              onClick={() => {
+                this.setState({ hasError: false })
+                window.location.reload()
+              }}
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
+            >
+              Reload App
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    return this.props.children
+  }
+}
+
+
 // Create QueryClient
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -102,7 +171,8 @@ const GameApp = () => {
 
 // Inner App Component (wrapped with providers)
 const InnerApp = () => {
-  const [appState, setAppState] = useState<AppState>('loading')
+  // ('loading')
+  const [appState, setAppState] = useState<AppState>('vs-battle')
   const { isReady, colorScheme, user } = useTelegram()
 
   useEffect(() => {
@@ -134,7 +204,7 @@ const InnerApp = () => {
   }
 
   const handleBattleBegin = () => {
-    setAppState('game')
+    // setAppState('game')
   }
 
   const handleBackToBattle = () => {
@@ -241,11 +311,13 @@ const InnerApp = () => {
 // Main App Component
 function App() {
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <InnerApp />
-      </QueryClientProvider>
-    </WagmiProvider>
+    <BigIntErrorBoundary>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <InnerApp />
+        </QueryClientProvider>
+      </WagmiProvider>
+    </BigIntErrorBoundary>
   )
 }
 
