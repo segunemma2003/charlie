@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import BattleGroundUpper from './BattleGroundUpper'
-// import BattleGroundMiddle from './BattleGroundMiddle'
+import BattleGroundMiddle from './BattleGroundMiddle'
 import BattleGroundLower from './BattleGroundLower'
 
 interface BattleGroundSkeletonProps {
@@ -20,6 +20,10 @@ export default function BattleGroundSkeleton({ onEnterBattle }: BattleGroundSkel
       {/* Upper 3D Section - absolutely at the top */}
       <div className="absolute top-0 left-0 w-full z-40">
         <BattleGroundUpper />
+      </div>
+      {/* Middle Section */}
+      <div className="absolute top-[12vh] left-0 w-full z-30 h-[54vh] flex items-center justify-center">
+        <BattleGroundMiddle />
       </div>
       {/* Lower Section */}
       <div className="h-[32vh] flex flex-col justify-start">
