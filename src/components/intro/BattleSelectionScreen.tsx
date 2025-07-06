@@ -1,14 +1,77 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTelegram } from '../../hooks/useTelegram'
 
 interface BattleSelectionScreenProps {
   onBattleStart: () => void // Add this prop
 }
 
+function ProfilePanel({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ y: '-100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '-100%', opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+          className="fixed top-0 left-0 w-full h-full z-50 flex flex-col items-center justify-start bg-gradient-to-b from-[#181a2b] to-[#181a2b]/80 backdrop-blur-xl"
+        >
+          {/* Top bar */}
+          <div className="w-full flex justify-center items-center pt-6 pb-2">
+            <h2 className="text-2xl font-bold text-white tracking-wide">Profile</h2>
+          </div>
+          {/* XP Bar and Level */}
+          <div className="w-full flex items-center justify-between px-8 mt-2">
+            <div className="flex items-center gap-2">
+              <div className="bg-gradient-to-br from-orange-400 to-orange-600 text-white font-bold px-4 py-1 rounded-xl border-2 border-orange-300 text-lg shadow">LV 2</div>
+              <div className="ml-2 w-48 h-3 bg-[#232544] rounded-full relative overflow-hidden">
+                <div className="absolute left-0 top-0 h-full bg-gradient-to-r from-green-400 to-cyan-400 rounded-full" style={{ width: '25%' }} />
+                <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs text-white font-bold">50/200 XP</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-cyan-400 rounded-full flex items-center justify-center border-4 border-[#232544]">
+                <img src="/assets/images/unicorn-head-icon.svg" alt="Avatar" className="w-10 h-10 object-contain" />
+              </div>
+              <div className="flex items-center mt-2">
+                <img src="/assets/images/trophy.svg" alt="Trophy" className="w-6 h-6 mr-1" />
+                <span className="text-white font-bold">0</span>
+              </div>
+            </div>
+          </div>
+          {/* UFO and Character */}
+          <div className="flex flex-col items-center mt-8 mb-4">
+            <img src="/assets/images/ufo.svg" alt="UFO" className="w-64 h-32 object-contain mb-[-16px]" />
+            <motion.img
+              src="/assets/images/muscle-unicorn.svg"
+              alt="Character"
+              className="w-64 h-32 object-contain"
+              animate={{ rotate: [10, -10, 10] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+              style={{ zIndex: 2 }}
+            />
+            <img src="/assets/images/ufo-base.svg" alt="UFO Base" className="w-64 h-32 object-contain mt-[-32px]" />
+          </div>
+          {/* Buttons */}
+          <div className="flex justify-center gap-8 mt-2">
+            <button className="px-8 py-3 rounded-lg font-bold text-white bg-gradient-to-br from-cyan-400 via-purple-400 to-green-300 border-2 border-cyan-200/60 shadow-md hover:scale-105 transition-all">CUSTOMIZE</button>
+            <button className="px-8 py-3 rounded-lg font-bold text-white bg-gradient-to-br from-cyan-400 via-purple-400 to-green-300 border-2 border-cyan-200/60 shadow-md hover:scale-105 transition-all">STATS</button>
+          </div>
+          {/* Close Button */}
+          <button onClick={onClose} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center border-2 border-white shadow-lg hover:scale-110 transition-all">
+            <span className="text-2xl text-white font-bold">×</span>
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = ({ onBattleStart }) => {
   const { hapticFeedback } = useTelegram()
   const [selectedMode, setSelectedMode] = useState(1) // 0: Tournament, 1: Multiplayer, 2: Training
+  const [showProfile, setShowProfile] = useState(false)
   
   const battleModes = [
     {
@@ -62,6 +125,7 @@ export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = ({ on
 
   const handleBottomItemClick = (item: string) => {
     hapticFeedback('impact', 'light')
+    if (item === 'PROFILE') setShowProfile(true)
     console.log('Clicked:', item)
   }
 
@@ -422,6 +486,7 @@ export const BattleSelectionScreen: React.FC<BattleSelectionScreenProps> = ({ on
           />
         ))}
       </div>
+      <ProfilePanel open={showProfile} onClose={() => setShowProfile(false)} />
     </motion.div>
   )
 }
